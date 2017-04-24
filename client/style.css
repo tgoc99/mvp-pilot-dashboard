@@ -1,0 +1,11 @@
+.day {
+    float:left;
+    width:10%;
+}
+.trip {
+    padding-top: 5px;
+    padding-bottom: 10px;
+}
+div {
+    float:left;
+}

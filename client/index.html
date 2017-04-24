@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html ng-app='app'>
+<head>
+  <title>Pilot Dashboard</title>
+  <link rel="stylesheet" type="text/css" href="style.css" />
+</head>
+<body ng-controller='main'>
+  <h1>Pilot Dashboard</h1>
+  
+  <form ng-submit="addTrip()">
+    <!-- <form> -->
+      Starting Airport: <input type="text" ng-model="firstAirport">
+      Starting Date: <input type="date" ng-model="startDate">
+      <br>
+    <!-- </form> -->
+    <!-- <form> -->
+      Next Airport:  <input type="text" ng-model="secondAirport">
+      Starting Date: <input type="date" ng-model="SAStartDate">
+      Ending Date: <input type="date" ng-model="endDate">
+    <!-- </form> -->
+    <input type="submit" value="Submit">
+  </form>
+
+  <div ng-repeat="trip in searchedTrips" class="trip">
+    <div ng-repeat="day in trip" class="day">
+      <div>{{day.date | date: 'fullDate'}}</div>
+      <div>{{day.city}}</div>
+      <div>{{day.weather}}</div>
+    </div>
+    <br>
+  </div>
+  
+
+  <script src="ang/angular/angular.js"></script>
+  <script src="ang/angular-route/angular-route.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
