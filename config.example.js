@@ -1,0 +1,1 @@
+var weatherAPI = INSERT API KEY HERE
