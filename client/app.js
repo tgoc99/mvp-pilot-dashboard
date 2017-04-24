@@ -28,7 +28,13 @@ angular.module('app',[])
     }
 
     $scope.searchedTrips.push(objToPush);
-    $http.post('/trips', objToPush);
+
+    var objToPost = {
+      days: tripDays,
+      trip: objToPush
+    };
+    
+    $http.post('/trips', objToPost);
 
     
 
