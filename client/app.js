@@ -1,5 +1,11 @@
 angular.module('app',[])
 .controller('main',function($scope, $http){
+  $http.get('/trips').then(function(data){
+    data.data.forEach(item => {
+      $scope.searchedTrips.push(item.trip)
+    })
+  })
+
   $scope.searchedTrips = [];
   $scope.startDate = new Date('2017-01-02');
   $scope.SAStartDate= new Date('2017-01-05');
@@ -33,7 +39,7 @@ angular.module('app',[])
       days: tripDays,
       trip: objToPush
     };
-    
+
     $http.post('/trips', objToPost);
 
     
