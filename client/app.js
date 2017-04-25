@@ -3,6 +3,7 @@ angular.module('app',[])
   $http.get('/trips').then(function(data){
     data.data.forEach(item => {
       $scope.searchedTrips.push(item.trip)
+      // console.log($scope.searchedTrips)
     })
   })
 
@@ -46,7 +47,16 @@ angular.module('app',[])
       trip: objToPush
     };
 
-    $http.post('/trips', objToPost);
+    $http.post('/trips', objToPost)
+    .then(function(){
+      $http.get('/trips').then(function(data){
+        $scope.searchedTrips=[];
+        data.data.forEach(item => {
+          $scope.searchedTrips.push(item.trip);
+          // console.log($scope.searchedTrips)
+        })
+      })
+    })
 
     
 

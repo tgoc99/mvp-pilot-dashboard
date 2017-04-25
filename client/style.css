@@ -1,15 +1,20 @@
-.day {
+/*.day {
     float:left;
-    width:12%;
+    width:10%;
     border-bottom: 2px;
     border-top: 2px;
     border-top-style: solid;
     border-bottom-style: solid;
-}
+}*/
 .trip {
     padding-top: 5px;
     padding-bottom: 10px;
 }
-div {
-    float:left;
+
+body {
+  padding-top: 50px;
+}
+.starter-template {
+  padding: 40px 15px;
+  text-align: center;
 }
