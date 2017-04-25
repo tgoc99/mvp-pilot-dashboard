@@ -1,0 +1,26 @@
+<div id='container'>
+  <div class="starter-template">
+    <h1>Pilot Dashboard</h1>
+    <p class="lead"><!-- PUT TAG LINE HERE? --></p>
+  </div>
+  
+  <h2 class="sub-header">Recently Input Trips</h2>
+  <div class="table-responsive">
+    <table class="table table-striped">
+      <tbody>
+        <tr ng-repeat="trip in searchedTrips | orderBy:'day0.date'">
+          <td>{{trip.days+1}}-Day Trip Starting: {{trip.trip.day0.date | date: 'EEEE, MMMM d'}} to {{trip.cities[0]}} and {{trip.cities[1]}}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+
+<!-- 
+ng-repeat="day in trip" class="day">
+            <div>{{day.city}}</div>
+            <div>{{day.date | date: 'EEEE'}}</div>
+            <div>{{day.date | date: 'MMMM d'}}</div>
+            <img src={{day.weather.icon_url}}>
+            <div>H:{{day.weather.high.fahrenheit}} / L:{{day.weather.low.fahrenheit}}</div> -->

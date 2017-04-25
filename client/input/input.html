@@ -1,0 +1,32 @@
+<div id='container'>
+  <div class="starter-template">
+    <h1>Pilot Dashboard</h1>
+    <p class="lead"><!-- PUT TAG LINE HERE? --></p>
+  </div>
+  <form ng-submit="addTrip()">
+      Starting Airport: <input type="text" ng-model="firstAirport">
+      Starting Date: <input type="date" ng-model="startDate">
+      <br>
+      Next Airport:  <input type="text" ng-model="secondAirport">
+      Starting Date: <input type="date" ng-model="SAStartDate">
+      Ending Date: <input type="date" ng-model="endDate">
+    <input type="submit" value="Submit">
+  </form>
+  
+  <h2 class="sub-header">Customized Weather Forecast</h2>
+  <div class="table-responsive">
+    <table class="table table-striped">
+      <tbody>
+        <tr ng-repeat="trip in searchedTrips | orderBy:'day0.date'">
+          <td ng-repeat="day in trip" class="day">
+            <div>{{day.city}}</div>
+            <div>{{day.date | date: 'EEEE'}}</div>
+            <div>{{day.date | date: 'MMMM d'}}</div>
+            <img src={{day.weather.icon_url}}>
+            <div>H:{{day.weather.high.fahrenheit}} / L:{{day.weather.low.fahrenheit}}</div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

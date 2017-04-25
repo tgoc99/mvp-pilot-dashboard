@@ -7,8 +7,7 @@ var db = require('./db-config.js');
 var Model = require('./model.js');
 var helpers = require('./helpers');
 var config = require('../config.js');
-
-
+var airports = require('airport-codes');
 
 // to run rp without helper
 var request = require('request');
@@ -35,7 +34,10 @@ app.post('/trips', function(req,res){
 
   var weatherData = [];
   var tripData = req.body;
-  // console.log('body:', req.body);
+  tripData.cities = [airports.findWhere({ iata: req.body.airports[0] }).get('city'), airports.findWhere({ iata: req.body.airports[1] }).get('city')]
+
+
+  console.log('td:', tripData);
   // helpers.getAsyncArray(req.body.airports)
 
   rp({
@@ -44,6 +46,7 @@ app.post('/trips', function(req,res){
   })
   .then(function(data){
     weatherData.push(data.forecast.simpleforecast.forecastday)
+    console.log('got here first then')
     // console.log('getOneRP:', data.forecast.simpleforecast.forecastday);
     // return data.forecast.simpleforecast.forecastday
     rp({
@@ -69,6 +72,8 @@ app.post('/trips', function(req,res){
       }
 
       // STILL NEED TO CHANGE THE WEATHER BY THE DATE BASED ON TRIP SCHEDULE
+
+      // console.log('td', tripData)
 
       var newTrip = new Model(tripData);
       newTrip.save(function (err, trip){
