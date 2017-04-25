@@ -7,9 +7,9 @@ angular.module('app',[])
   })
 
   $scope.searchedTrips = [];
-  $scope.startDate = new Date('2017-01-02');
-  $scope.SAStartDate= new Date('2017-01-05');
-  $scope.endDate= new Date('2017-01-08');
+  $scope.startDate = new Date('2017-04-26');
+  $scope.SAStartDate= new Date('2017-04-28');
+  $scope.endDate= new Date('2017-04-30');
 
   $scope.addTrip = function(){
     var startDate = new Date($scope.startDate);
@@ -33,9 +33,10 @@ angular.module('app',[])
       objToPush['day'+i] = {date:date, city: city, weather:'TBD'};
     }
 
-    $scope.searchedTrips.push(objToPush);
+    $scope.searchedTrips.push(objToPush); // NEED TO ADD WEATHER DATA THEN LATER PUSH
 
     var objToPost = {
+      airports: [$scope.firstAirport, $scope.secondAirport],
       days: tripDays,
       trip: objToPush
     };
