@@ -1,6 +1,10 @@
 .day {
     float:left;
-    width:10%;
+    width:12%;
+    border-bottom: 2px;
+    border-top: 2px;
+    border-top-style: solid;
+    border-bottom-style: solid;
 }
 .trip {
     padding-top: 5px;

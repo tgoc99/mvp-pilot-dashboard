@@ -19,6 +19,8 @@ angular.module('app',[])
     // NEXT TWO LINES TO GET NUMBER OF DAYS OF TRIP
     var oneDay = 24*60*60*1000; // hours*minutes*seconds*millisecond
     var tripDays = Math.round(Math.abs((startDate.getTime() - endDate.getTime())/(oneDay)));
+    var daysToStart = Math.round(Math.abs((new Date() - startDate.getTime())/(oneDay)));
+    console.log('daysToStart:', daysToStart)
 
     // Create an object (or array?) with the data for each day to push into the searched Trips array
     var objToPush = {};  /// MAKE AN ARRAY? or KEEP OBJ?
@@ -36,6 +38,9 @@ angular.module('app',[])
     $scope.searchedTrips.push(objToPush); // NEED TO ADD WEATHER DATA THEN LATER PUSH
 
     var objToPost = {
+      startDate: $scope.startDate,
+      daysToStart: daysToStart,
+      secondStart: $scope.SAStartDate,
       airports: [$scope.firstAirport, $scope.secondAirport],
       days: tripDays,
       trip: objToPush
@@ -51,7 +56,7 @@ angular.module('app',[])
     // $scope.secondAirport='';
     // $scope.SAStartDate='';
     // $scope.endDate='';
-    console.log('st:', $scope.searchedTrips);
+    // console.log('st:', $scope.searchedTrips);
 
 
 

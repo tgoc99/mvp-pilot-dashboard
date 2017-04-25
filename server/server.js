@@ -34,7 +34,8 @@ app.get('/trips', function(req,res){
 app.post('/trips', function(req,res){
 
   var weatherData = [];
-  console.log('body:', req.body);
+  var tripData = req.body;
+  // console.log('body:', req.body);
   // helpers.getAsyncArray(req.body.airports)
 
   rp({
@@ -43,32 +44,44 @@ app.post('/trips', function(req,res){
   })
   .then(function(data){
     weatherData.push(data.forecast.simpleforecast.forecastday)
-    console.log('getOneRP:', data.forecast.simpleforecast.forecastday);
+    // console.log('getOneRP:', data.forecast.simpleforecast.forecastday);
     // return data.forecast.simpleforecast.forecastday
     rp({
       uri: `http://api.wunderground.com/api/${config.weatherAPI}/forecast10day/q/${req.body.airports[1]}.json`,
       json: true // Automatically parses the JSON string in the response 
     })
     .then(function(secondData){
-      console.log('sd:', secondData);
+      // console.log('sd:', secondData);
       weatherData.push(secondData.forecast.simpleforecast.forecastday)
-      console.log('wd:', weatherData)
+      // console.log('wd:', weatherData)
+      console.log('wd:pretty date', new Date(weatherData[0][0].date.epoch*1000));
+      var wdStartDate = new Date(weatherData[0][0].date.epoch*1000);
+      var tripStartDate = tripData.trip.day0.date;
+      var daysToStart = tripData.daysToStart;
+      var secondStart = tripData.secondStart;
+
+      // use td to change airports
+      var td = 0;
+
+      for(i=0;i<=tripData.days;i++){
+        if(tripData.trip['day'+i].date >= secondStart) td = 1;
+        tripData.trip['day'+i]['weather'] = weatherData[td][i+daysToStart];
+      }
+
+      // STILL NEED TO CHANGE THE WEATHER BY THE DATE BASED ON TRIP SCHEDULE
+
+      var newTrip = new Model(tripData);
+      newTrip.save(function (err, trip){
+        if(err) return console.error(err);
+        console.log('added to db: weather', trip.trip.day0.weather);
+      })
+      res.send('success')
+
+
       // HERE - Manipulate weatherData
     })
   })
 
-
-  helpers.getAsyncRP(req.body.airports[0])
-  .then(function(data){
-    console.log('second RP get arg:', data)
-    helpers.getAsyncRP(req.body.airports[1])
-  })
-  var newTrip = new Model(req.body);
-  newTrip.save(function (err, trip){
-    if(err) return console.error(err);
-    console.log(trip);
-  })
-  res.send('success')
 })
 
 module.exports = app;
