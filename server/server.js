@@ -19,7 +19,7 @@ app.use(bodyParser.urlencoded({extended:false}));
 app.use(bodyParser.json());
 app.use(express.static(__dirname + '/../client'));
 
-var port = 3000;
+var port = process.env.PORT || 3000;
 app.listen(port);
 console.log('Server listening on port:', port)
 
