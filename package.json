@@ -8,8 +8,8 @@
     "node": ">=4.0.0"
   },
   "scripts": {
-    "postinstall": "bower install",
-    "start": "nodemon node index.js"
+    "heroku-postbuild": "bower install",
+    "start": "node server/server.js"
   },
   "dependencies": {
     "airport-codes": "^1.0.2",
