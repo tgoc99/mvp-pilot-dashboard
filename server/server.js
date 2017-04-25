@@ -38,6 +38,7 @@ app.post('/trips', function(req,res){
 
 
   console.log('td:', tripData);
+  console.log('td cities:', tripData.cities);
   // helpers.getAsyncArray(req.body.airports)
 
   rp({
@@ -62,12 +63,35 @@ app.post('/trips', function(req,res){
       var tripStartDate = tripData.trip.day0.date;
       var daysToStart = tripData.daysToStart;
       var secondStart = tripData.secondStart;
+      console.log('ss:', secondStart);
+
+      var startDate = new Date(tripData.startDate);
+      var SAStartDate = new Date(tripData.secondStart);
+
+
+      var setDay = function (date, days){
+        newDate = new Date(date)
+        newDate.setDate(newDate.getDate() + days)
+        return newDate;
+      }
+
+      for(var i =0; i<= tripData.days; i++){
+        var date = setDay(startDate, i);
+        var city;
+        if(date<SAStartDate){
+          city = tripData.cities[0];
+        } else {
+          city = tripData.cities[1];
+        }
+        tripData.trip['day'+i] = {date:date, city: city, weather:'TBD'};
+        console.log('day added:', {date:date, city: city, weather:'TBD'})
+      }
 
       // use td to change airports
       var td = 0;
 
       for(i=0;i<=tripData.days;i++){
-        if(tripData.trip['day'+i].date >= secondStart) td = 1;
+        if(tripData.trip['day'+i].date >= SAStartDate) td = 1;
         tripData.trip['day'+i]['weather'] = weatherData[td][i+daysToStart];
       }
 
@@ -79,8 +103,8 @@ app.post('/trips', function(req,res){
       newTrip.save(function (err, trip){
         if(err) return console.error(err);
         console.log('added to db: weather', trip.trip.day0.weather);
+        res.send(trip)
       })
-      res.send('success')
 
 
       // HERE - Manipulate weatherData

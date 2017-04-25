@@ -1,14 +1,19 @@
 angular.module('pilotdb.input',[])
-.controller('inputController',function($scope, $http){
+.controller('inputController',function($scope, $http, GetTrip){
 
-  $http.get('/trips').then(function(data){
-    data.data.forEach(item => {
-      $scope.searchedTrips.push(item.trip)
-      // console.log($scope.searchedTrips)
-    })
-  })
+  // CHANGING TO ONE PAGE ONE SEARCH
+  // $http.get('/trips').then(function(data){
+  //   data.data.forEach(item => {
+  //     $scope.searchedTrips.push(item.trip)
+  //     // console.log($scope.searchedTrips)
+  //   })
+  // })
 
   $scope.searchedTrips = [];
+
+  if(GetTrip.getTrip()){
+    $scope.searchedTrips.push(GetTrip.getTrip())
+  }
   $scope.startDate = new Date('2017-04-27');
   $scope.SAStartDate= new Date('2017-04-29');
   $scope.endDate= new Date('2017-05-02');
@@ -37,27 +42,34 @@ angular.module('pilotdb.input',[])
       objToPush['day'+i] = {date:date, city: city, weather:'TBD'};
     }
 
-    $scope.searchedTrips.push(objToPush); // NEED TO ADD WEATHER DATA THEN LATER PUSH
-
     var objToPost = {
-      startDate: $scope.startDate,
+      startDate: startDate,
       daysToStart: daysToStart,
-      secondStart: $scope.SAStartDate,
+      secondStart: SAStartDate,
       airports: [$scope.firstAirport, $scope.secondAirport],
       days: tripDays,
       trip: objToPush
     };
 
+
     $http.post('/trips', objToPost)
-    .then(function(){
-      $http.get('/trips').then(function(data){
-        $scope.searchedTrips=[];
-        data.data.forEach(item => {
-          $scope.searchedTrips.push(item.trip);
-          // console.log($scope.searchedTrips)
-        })
-      })
+    .then(function(data){
+      $scope.searchedTrips = []
+      $scope.searchedTrips.push(data.data);
+      console.log('st:', $scope.searchedTrips)
     })
+
+
+    // CHANGING TO ONE PAGE ONE SEARCH
+    // .then(function(){
+    //   $http.get('/trips').then(function(data){
+    //     $scope.searchedTrips=[];
+    //     data.data.forEach(item => {
+    //       $scope.searchedTrips.push(item.trip);
+    //       // console.log($scope.searchedTrips)
+    //     })
+    //   })
+    // })
 
     // $scope.firstAirport=''; 
     // $scope.startDate ='';

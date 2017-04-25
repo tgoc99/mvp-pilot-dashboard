@@ -8,8 +8,8 @@
   <div class="table-responsive">
     <table class="table table-striped">
       <tbody>
-        <tr ng-repeat="trip in searchedTrips | orderBy:'day0.date'">
-          <td>{{trip.days+1}}-Day Trip Starting: {{trip.trip.day0.date | date: 'EEEE, MMMM d'}} to {{trip.cities[0]}} and {{trip.cities[1]}}</td>
+        <tr ng-repeat="trip in searchedTrips track by $index | orderBy:'day0.date'" ng-click="clickForData(searchedTrips[$index])">
+          <td  ng-click="clickForData(searchedTrips[$index])">{{trip.days+1}}-Day Trip Starting: {{trip.trip.day0.date | date: 'EEEE, MMMM d'}} to {{trip.cities[0]}} and {{trip.cities[1]}}</td>
         </tr>
       </tbody>
     </table>

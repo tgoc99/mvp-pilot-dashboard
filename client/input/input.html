@@ -18,7 +18,7 @@
     <table class="table table-striped">
       <tbody>
         <tr ng-repeat="trip in searchedTrips | orderBy:'day0.date'">
-          <td ng-repeat="day in trip" class="day">
+          <td ng-repeat="day in trip.trip" class="day">
             <div>{{day.city}}</div>
             <div>{{day.date | date: 'EEEE'}}</div>
             <div>{{day.date | date: 'MMMM d'}}</div>
