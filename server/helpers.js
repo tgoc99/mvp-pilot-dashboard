@@ -17,6 +17,12 @@ exports.get = function(item){
   })
 }
 
+exports.setDay = function (date, days){
+  newDate = new Date(date)
+  newDate.setDate(newDate.getDate() + days)
+  return newDate;
+}
+
 exports.getAsyncRP = function(item){
   return new Promise ((resolve) =>{ rp({
       uri: `http://api.wunderground.com/api/${config.weatherAPI}/forecast10day/q/${item}.json`,

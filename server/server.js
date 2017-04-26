@@ -7,7 +7,8 @@ var db = require('./db-config.js');
 var Model = require('./model.js');
 var helpers = require('./helpers');
 var config = require('../config.js');
-var airports = require('airport-codes');
+var country = require('countryjs');
+var currencies = require('currencies');
 
 // to run rp without helper
 var request = require('request');
@@ -33,84 +34,87 @@ app.get('/trips', function(req,res){
 app.post('/trips', function(req,res){
 
   var weatherData = [];
+  var airportData = [];
   var tripData = req.body;
-  tripData.cities = [airports.findWhere({ iata: req.body.airports[0] }).get('city'), airports.findWhere({ iata: req.body.airports[1] }).get('city')]
+  tripData.trip = {};
 
-
-  console.log('td:', tripData);
-  console.log('td cities:', tripData.cities);
-  // helpers.getAsyncArray(req.body.airports)
+  // Update currencies
+  currencies.update(function(err, newCurrencies) {
+    newCurrencies['USD'].rate === 1
+  });
 
   rp({
-    uri: `http://api.wunderground.com/api/${config.weatherAPI}/forecast10day/q/${req.body.airports[0]}.json`,
+    uri: `http://api.wunderground.com/api/${config.weatherAPI}/geolookup/q/${req.body.airports[0]}.json`,
     json: true // Automatically parses the JSON string in the response 
   })
-  .then(function(data){
-    weatherData.push(data.forecast.simpleforecast.forecastday)
-    console.log('got here first then')
-    // console.log('getOneRP:', data.forecast.simpleforecast.forecastday);
-    // return data.forecast.simpleforecast.forecastday
+  .then(function(locData){
+    airportData.push(locData.location)
     rp({
-      uri: `http://api.wunderground.com/api/${config.weatherAPI}/forecast10day/q/${req.body.airports[1]}.json`,
+      uri: `http://api.wunderground.com/api/${config.weatherAPI}/geolookup/q/${req.body.airports[1]}.json`,
       json: true // Automatically parses the JSON string in the response 
     })
-    .then(function(secondData){
-      // console.log('sd:', secondData);
-      weatherData.push(secondData.forecast.simpleforecast.forecastday)
-      // console.log('wd:', weatherData)
-      console.log('wd:pretty date', new Date(weatherData[0][0].date.epoch*1000));
-      var wdStartDate = new Date(weatherData[0][0].date.epoch*1000);
-      var tripStartDate = tripData.trip.day0.date;
-      var daysToStart = tripData.daysToStart;
-      var secondStart = tripData.secondStart;
-      console.log('ss:', secondStart);
+    .then(function(locData2){
+      airportData.push(locData2.location)
+      rp({
+        uri: `http://api.wunderground.com/api/${config.weatherAPI}/forecast10day/${airportData[0].l}.json`,
+        json: true // Automatically parses the JSON string in the response 
+      })
+      .then(function(data){
+        weatherData.push(data.forecast.simpleforecast.forecastday)
+        rp({
+          uri: `http://api.wunderground.com/api/${config.weatherAPI}/forecast10day/${airportData[1].l}.json`,
+          json: true // Automatically parses the JSON string in the response 
+        })
+        .then(function(secondData){
+          weatherData.push(secondData.forecast.simpleforecast.forecastday);
 
-      var startDate = new Date(tripData.startDate);
-      var SAStartDate = new Date(tripData.secondStart);
+          // SETTING THE ISO DATA , CITIES, TIME ZONE,
+          tripData.ISOs = [airportData[0].country_iso3166, airportData[1].country_iso3166];
+          tripData.cities = [airportData[0].city, airportData[1].city];
+          tripData.TZs = [airportData[0].tz_long, airportData[1].tz_long];
+          tripData.fxCode = [country.currencies(tripData.ISOs[0])[0], country.currencies(tripData.ISOs[1])[0]];
+          tripData.languages = [country.languages(tripData.ISOs[0])[0], country.languages(tripData.ISOs[1])[0]];
+          tripData.callingCodes = [country.callingCodes(tripData.ISOs[0])[0], country.callingCodes(tripData.ISOs[1])[0]];
+          tripData.fx = [currencies.get(tripData.fxCode[0]).rate, currencies.get(tripData.fxCode[1]).rate];
+
+          // SETTING THE CITIES FOR EACH DAY
+          var startDate = new Date(tripData.startDate);
+          var secondStart = new Date(tripData.secondStart);
+
+          for(var i =0; i<= tripData.days; i++){
+            var date = helpers.setDay(startDate, i);
+            var city;
+            if(date<secondStart){
+              city = tripData.cities[0];
+            } else {
+              city = tripData.cities[1];
+            }
+            tripData.trip['day'+i] = {date:date, city: city, weather:'TBD'};
+          }
+
+          // SETTING THE WEATHER FOR EACH DAY
+          // use td to change airports
+          var td = 0;
+
+          for(i=0;i<=tripData.days;i++){
+            if(tripData.trip['day'+i].date >= secondStart) td = 1;
+            tripData.trip['day'+i]['weather'] = weatherData[td][i+tripData.daysToStart];
+          }
 
 
-      var setDay = function (date, days){
-        newDate = new Date(date)
-        newDate.setDate(newDate.getDate() + days)
-        return newDate;
-      }
+          // PUTTING INTO THE DB
+          var newTrip = new Model(tripData);
+          newTrip.save(function (err, trip){
+            if(err) return console.error(err);
+            console.log('added to db: weather', trip.trip.day0.weather);
+            res.send(trip);
+          })
 
-      for(var i =0; i<= tripData.days; i++){
-        var date = setDay(startDate, i);
-        var city;
-        if(date<SAStartDate){
-          city = tripData.cities[0];
-        } else {
-          city = tripData.cities[1];
-        }
-        tripData.trip['day'+i] = {date:date, city: city, weather:'TBD'};
-        console.log('day added:', {date:date, city: city, weather:'TBD'})
-      }
-
-      // use td to change airports
-      var td = 0;
-
-      for(i=0;i<=tripData.days;i++){
-        if(tripData.trip['day'+i].date >= SAStartDate) td = 1;
-        tripData.trip['day'+i]['weather'] = weatherData[td][i+daysToStart];
-      }
-
-      // STILL NEED TO CHANGE THE WEATHER BY THE DATE BASED ON TRIP SCHEDULE
-
-      // console.log('td', tripData)
-
-      var newTrip = new Model(tripData);
-      newTrip.save(function (err, trip){
-        if(err) return console.error(err);
-        console.log('added to db: weather', trip.trip.day0.weather);
-        res.send(trip)
+        })
       })
 
-
-      // HERE - Manipulate weatherData
     })
   })
-
 })
 
 module.exports = app;

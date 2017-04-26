@@ -4,16 +4,16 @@
     <p class="lead"><!-- PUT TAG LINE HERE? --></p>
   </div>
   <form ng-submit="addTrip()">
-      Starting Airport: <input type="text" ng-model="firstAirport">
+      Starting Airport: <input type="text" ng-model="firstAirport" placeholder="airport code (i.e. JFK)">
       Starting Date: <input type="date" ng-model="startDate">
       <br>
-      Next Airport:  <input type="text" ng-model="secondAirport">
+      Next Airport:  <input type="text" ng-model="secondAirport" placeholder="airport code (i.e. JFK)">
       Starting Date: <input type="date" ng-model="SAStartDate">
       Ending Date: <input type="date" ng-model="endDate">
     <input type="submit" value="Submit">
   </form>
   
-  <h2 class="sub-header">Customized Weather Forecast</h2>
+  <h4 class="sub-header">Customized Weather Forecast</h4>
   <div class="table-responsive">
     <table class="table table-striped">
       <tbody>
@@ -29,4 +29,27 @@
       </tbody>
     </table>
   </div>
+  <h4 class="sub-header">Location Details</h4>
+  <div class="table-responsive">
+    <table class="table table-striped">
+      <tbody>
+        <tr>
+          <td>{{searchedTrips[0].cities[0]}} : </td>
+          <td>{{searchedTrips[0].fxCode[0]}}/USD :{{searchedTrips[0].fx[0]}}</td>
+          <td>Language: {{searchedTrips[0].languages[0].toUpperCase()}}</td>
+          <td>Time Zone: {{searchedTrips[0].TZs[0]}}</td>
+          <td>Calling Code: +{{searchedTrips[0].callingCodes[0]}}</td>
+        </tr>
+        <tr>
+          <td>{{searchedTrips[0].cities[1]}} : </td>
+          <td>{{searchedTrips[0].fxCode[1]}}/USD :{{searchedTrips[0].fx[1]}}</td>
+          <td>Language: {{searchedTrips[0].languages[1].toUpperCase()}}</td>
+          <td>Time Zone: {{searchedTrips[0].TZs[1]}}</td>
+          <td>Calling Code: +{{searchedTrips[0].callingCodes[1]}}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </div>
+
+
