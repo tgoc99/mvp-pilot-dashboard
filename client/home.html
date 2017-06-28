@@ -1,3 +1,8 @@
 <div>
-    <img src='./Logo.jpg' class='logo' width="100%">
+  <img src='./Logo.jpg' class='logo' width="100%">
+  <form ng-submit="register()">
+      User: <input type="text" ng-model="user.username">
+      Password: <input type="text" ng-model="user.password">
+      <input type="submit" value="Submit">
+  </form>  
 </div>

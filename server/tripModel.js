@@ -1,7 +1,10 @@
 var db = require('./db-config.js');
 var mongoose = require('mongoose');
+var Schema = mongoose.Schema;
 
-var tripSchema = new mongoose.Schema({
+//LATER fix this 
+
+var Trip = mongoose.model('Trip', {
   daysToStart: Number,
   days: Number,
   ISOs: mongoose.Schema.Types.Mixed,
@@ -14,11 +17,5 @@ var tripSchema = new mongoose.Schema({
   trip: mongoose.Schema.Types.Mixed,
   airports: mongoose.Schema.Types.Mixed
 })
-
-console.log('in the model!');
-
-var Trip = mongoose.model('Trip', tripSchema);
-
-Trip
 
 module.exports = Trip;

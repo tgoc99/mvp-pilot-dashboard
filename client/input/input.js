@@ -10,9 +10,9 @@ angular.module('pilotdb.input',[])
   if(GetTrip.getTrip()){
     $scope.searchedTrips.push(GetTrip.getTrip())
   }
-  $scope.startDate = new Date('2017-04-28');
-  $scope.SAStartDate= new Date('2017-05-02');
-  $scope.endDate= new Date('2017-05-05');
+  $scope.startDate = new Date();
+  $scope.SAStartDate= new Date('2017-05-10');
+  $scope.endDate= new Date('2017-05-13');
 
   $scope.addTrip = function(){
     var startDate = new Date($scope.startDate);
