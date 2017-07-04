@@ -1,19 +1,19 @@
-var express = require('express');
-var morgan = require('morgan');
-var bodyParser = require('body-parser');
-var db = require('./db-config.js')
+const express = require('express');
+const morgan = require('morgan');
+const bodyParser = require('body-parser');
+const db = require('./db-config.js')
 
 // Authentication dependencies
-var cookieParser = require('cookie-parser');
-var expressSession = require('express-session');
-var mongoose = require('mongoose');
-var hash = require('bcrypt-nodejs');
-var passport = require('passport');
-var localStrategy = require('passport-local').Strategy;
-var User = require('./userModel.js');
+const cookieParser = require('cookie-parser');
+const expressSession = require('express-session');
+const mongoose = require('mongoose');
+const hash = require('bcrypt-nodejs');
+const passport = require('passport');
+const localStrategy = require('passport-local').Strategy;
+const User = require('./userModel.js');
 
 // Setup express app
-var app = express();
+const app = express();
 
 // Setup middleware
 app.use(morgan('dev'));
@@ -37,9 +37,9 @@ passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
 // ROUTES in separate file
-var routes = require('./routes.js')(app, express);
+const routes = require('./routes.js')(app, express);
 
-var port = process.env.PORT || 3000;
+const port = process.env.PORT || 3000;
 app.listen(port);
 console.log('Server listening on port:', port)
 
