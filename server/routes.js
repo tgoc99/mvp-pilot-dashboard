@@ -1,17 +1,16 @@
-var tripModel = require('./tripModel.js');
-var country = require('countryjs');
-var currencies = require('currencies');
-var config = require('../config.js');
-var helpers = require('./helpers');
-var request = require('request');
-var rp = require('request-promise');
-var passport = require('passport');
-var User = require('./userModel.js');
-var mongoose = require('mongoose');
+const tripModel = require('./tripModel.js');
+const country = require('countryjs');
+const currencies = require('currencies');
+const config = require('../config.js');
+const helpers = require('./helpers');
+const request = require('request');
+const rp = require('request-promise');
+const passport = require('passport');
+const User = require('./userModel.js');
+const mongoose = require('mongoose');
 
 
 module.exports = function (app, express) {
-
 
   // AUTHENTICATION
   app.post('/register', function(req, res) {
@@ -54,9 +53,9 @@ module.exports = function (app, express) {
     console.log('session info post /trips', req.session.passport.user);
     console.log('attempting to create trip', req.body);
 
-    var weatherData = [];
-    var airportData = [];
-    var tripData = req.body;
+    let weatherData = [];
+    let airportData = [];
+    let tripData = req.body;
     tripData.trip = {};
 
     // Update currencies
@@ -99,12 +98,12 @@ module.exports = function (app, express) {
             tripData.fx = [currencies.get(tripData.fxCode[0]).rate, currencies.get(tripData.fxCode[1]).rate];
 
             // SETTING THE CITIES FOR EACH DAY
-            var startDate = new Date(tripData.startDate);
-            var secondStart = new Date(tripData.secondStart);
+            let startDate = new Date(tripData.startDate);
+            let secondStart = new Date(tripData.secondStart);
 
-            for(var i =0; i<= tripData.days; i++){
-              var date = helpers.setDay(startDate, i);
-              var city;
+            for(let i =0; i<= tripData.days; i++){
+              let date = helpers.setDay(startDate, i);
+              let city;
               if(date<secondStart){
                 city = tripData.cities[0];
               } else {
@@ -115,7 +114,7 @@ module.exports = function (app, express) {
 
             // SETTING THE WEATHER FOR EACH DAY
             // use td to change airports
-            var td = 0;
+            let td = 0;
 
             for(i=0;i<=tripData.days;i++){
               if(tripData.trip['day'+i].date >= secondStart) td = 1;
@@ -124,7 +123,7 @@ module.exports = function (app, express) {
 
 
             // PUTTING INTO THE DB
-            var newTrip = new tripModel(tripData);
+            let newTrip = new tripModel(tripData);
             User.findOneAndUpdate(
               {username: username},
               {$push:{'trips': tripData}},
